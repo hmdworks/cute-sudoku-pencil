@@ -77,7 +77,8 @@ async function main() {
 
     const grid = readGrid();
 
-    console.log("My Sudoku grid 💗:", table(grid));
+    console.log("My Sudoku grid 💗");
+    console.table(grid);
 }
 
 
