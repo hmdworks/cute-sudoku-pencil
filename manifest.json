@@ -1,0 +1,14 @@
+
+{
+    "manifest_version": 3,
+    "name": "Cute Sudoku Pencil",
+    "version": "1.0",
+    "description": "Your little Sudoku helper ♡",
+    "content_scripts": [
+        {
+            "matches": ["https://www.nytimes.com/puzzles/sudoku*"],
+            "js": ["candidates.js", "content.js"],
+            "run_at": "document_idle"
+        }
+    ]
+}
