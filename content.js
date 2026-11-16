@@ -1,4 +1,25 @@
 
+const style = document.createElement('style');
+style.textContent = `
+    svg.su-candidate-button path.su-number,
+    .su-candidate-button:hover path.su-number,
+    .su-candidate-button:focus path.su-number,
+    [class*="candidate"] path {
+    fill: #ef4089 !important;
+    }
+
+    [aria-selected="true"],
+    .su-cell[aria-selected="true"] {
+        background-color: rgb(252, 179, 209) !important;
+    }
+
+    .su-cell.highlighted:not([aria-selected="true"]) {
+        background-color: rgb(247, 215, 220) !important;
+    }
+`;
+document.head.appendChild(style);
+
+
 function findSudokuBoard() {
     return new Promise((resolve) => {
         const checkBoard = () => {
@@ -19,7 +40,6 @@ function findSudokuBoard() {
             subtree: true
         });
 
-        // Check in case the board already exists
         checkBoard();
     });
 }
@@ -30,7 +50,6 @@ function readGrid() {
         '[role="gridcell"]'
     )];
     
-    // Sort cells by their board index
     cells.sort((a, b) =>
         Number(a.dataset.cell) - Number(b.dataset.cell)
     );
@@ -48,7 +67,6 @@ function readGrid() {
             const index = row * 9 + col;
             const cell = cells[index];
 
-            // Only read the main cell value, not pencil marks
             const number = cell.querySelector(
                 ".su-cell__value[data-number]"
             );
