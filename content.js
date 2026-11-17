@@ -67,6 +67,63 @@ async function readGrid() {
 }
 
 
+function simulateClick(element) {
+    element.dispatchEvent(new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window
+    }));
+}
+
+
+async function generateCandidates() {
+    const grid = await readGrid();
+    if (!grid) return;
+
+    const cells = [...document.querySelectorAll('[role="gridcell')];
+
+    cells.sort((a, b) =>
+        Number(a.dataset.cell) - Number(b.dataset.cell)
+    );
+
+    for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+
+            if (!isEmpty(grid, r, c)) continue;
+
+            const cell = cells[r * 9 + c];
+            if (!cell) continue;
+
+            const validCandidates = getCandidates(grid, r, c);
+
+            cell.click();
+
+            for (let num = 1; num <= 9; num++) {
+
+                const container = document.querySelector(
+                    '.su-candidates.selected'
+                );
+
+                const isSelected = !!container.querySelector(
+                    '.su-candidate[data-candidate="${num}"'
+                );
+
+                const shouldBeSelected = validCandidates.includes(num);
+
+                if (isSelected === shouldBeSelected) continue;
+
+                const button = container.querySelector(
+                    `.su-candidate-button[data-candidate="${num}"]`
+                );
+
+                if (button) {
+                    simulateClick(button);
+                }
+            }
+        }
+    }
+
+}
 async function main() {
     const boardFound = await findSudokuBoard();
 
@@ -74,6 +131,8 @@ async function main() {
         console.log("Sudoku board not found! 🥺");
         return;
     }
+
+    generateCandidates();
 }
 
 
