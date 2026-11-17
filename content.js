@@ -1,25 +1,4 @@
 
-const style = document.createElement('style');
-style.textContent = `
-    svg.su-candidate-button path.su-number,
-    .su-candidate-button:hover path.su-number,
-    .su-candidate-button:focus path.su-number,
-    [class*="candidate"] path {
-    fill: #ef4089 !important;
-    }
-
-    [aria-selected="true"],
-    .su-cell[aria-selected="true"] {
-        background-color: rgb(252, 179, 209) !important;
-    }
-
-    .su-cell.highlighted:not([aria-selected="true"]) {
-        background-color: rgb(247, 215, 220) !important;
-    }
-`;
-document.head.appendChild(style);
-
-
 function findSudokuBoard() {
     return new Promise((resolve) => {
         const checkBoard = () => {
@@ -45,7 +24,14 @@ function findSudokuBoard() {
 }
 
 
-function readGrid() {
+async function readGrid() {
+    const boardFound = await findSudokuBoard();
+
+    if (!boardFound) {
+        console.log("Could not find grid...");
+        return;
+    }
+
     const cells = [...document.querySelectorAll(
         '[role="gridcell"]'
     )];
@@ -53,10 +39,6 @@ function readGrid() {
     cells.sort((a, b) =>
         Number(a.dataset.cell) - Number(b.dataset.cell)
     );
-
-    if (cells.length !== 81) {
-        return null;
-    }
 
     const grid = [];
 
@@ -92,11 +74,6 @@ async function main() {
         console.log("Sudoku board not found! 🥺");
         return;
     }
-
-    const grid = readGrid();
-
-    console.log("My Sudoku grid 💗");
-    console.table(grid);
 }
 
 

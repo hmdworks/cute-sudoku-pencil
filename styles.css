@@ -1,0 +1,26 @@
+
+svg.su-candidate-button path.su-number,
+.su-candidate-button:hover path.su-number,
+.su-candidate-button:focus path.su-number,
+[class*="candidate"] path {
+fill: #ef4089 !important;
+}
+
+[aria-selected="true"],
+.su-cell[aria-selected="true"],
+.su-cell.highlightedSameNumber {
+    background-color: rgba(255, 175, 208, 0.97) !important;
+}
+
+.su-cell.highlighted:not([aria-selected="true"]) {
+    background-color: rgb(247, 215, 220) !important;
+}
+
+svg.su-keyboard__svg path.su-number,
+svg.su-cell__value path.su-number {
+    fill: rgb(53, 26, 97) !important;
+}
+
+.su-cell.confirmed svg.su-cell__value.su-stretch path.su-number {
+    fill: rgb(132, 98, 187) !important;
+}
