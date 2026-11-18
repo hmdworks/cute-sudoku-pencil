@@ -24,3 +24,24 @@ svg.su-cell__value path.su-number {
 .su-cell.confirmed svg.su-cell__value.su-stretch path.su-number {
     fill: rgb(132, 98, 187) !important;
 }
+
+#cute-candidate-btn,
+#cute-clear-candidate-btn {
+    margin-top: 8px;
+    padding: 8px 16px;
+    background-color: #fbacce;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: block;
+}
+
+#cute-candidate-btn:hover,
+#cute-clear-candidate-btn:hover {
+    background-color: #ea7ba8;
+}

@@ -76,11 +76,34 @@ function simulateClick(element) {
 }
 
 
-async function generateCandidates() {
+function getCandidatesForCell(cell) {
+    const rect = cell.getBoundingClientRect();
+
+    return [...document.querySelectorAll('.su-candidate')]
+        .filter(candidate => {
+            const candidateRect = candidate.getBoundingClientRect();
+
+            const x = candidateRect.left + candidateRect.width / 2;
+            const y = candidateRect.top + candidateRect.height / 2;
+
+            return (
+                x >= rect.left &&
+                x <= rect.right &&
+                y >= rect.top &&
+                y <= rect.bottom
+            );
+        })
+        .map(candidate => Number(candidate.dataset.candidate));
+}
+
+
+async function updateCandidates(mode) {
     const grid = await readGrid();
     if (!grid) return;
 
-    const cells = [...document.querySelectorAll('[role="gridcell')];
+    const originalSelection = document.querySelector('.su-cell.selected');
+
+    const cells = [...document.querySelectorAll('[role="gridcell"]')];
 
     cells.sort((a, b) =>
         Number(a.dataset.cell) - Number(b.dataset.cell)
@@ -98,17 +121,20 @@ async function generateCandidates() {
 
             cell.click();
 
+            const container = document.querySelector(
+                '.su-candidates.selected'
+            );
+
+            if (!container) continue;
+
+            const existingCandidates = getCandidatesForCell(cell);
+
             for (let num = 1; num <= 9; num++) {
+                const isSelected = existingCandidates.includes(num);
 
-                const container = document.querySelector(
-                    '.su-candidates.selected'
-                );
-
-                const isSelected = !!container.querySelector(
-                    '.su-candidate[data-candidate="${num}"'
-                );
-
-                const shouldBeSelected = validCandidates.includes(num);
+                const shouldBeSelected = mode === 'generate'
+                    ? validCandidates.includes(num)
+                    : false;
 
                 if (isSelected === shouldBeSelected) continue;
 
@@ -123,7 +149,49 @@ async function generateCandidates() {
         }
     }
 
+    if (originalSelection) {
+        originalSelection.click();
+    }
 }
+
+async function generateCandidates() {
+    await updateCandidates('generate');
+}
+
+async function clearAllCandidates() {
+    await updateCandidates('clear');
+}
+
+
+function injectAutoButtons() {
+    if (document.getElementById('cute-candidate-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.id = 'cute-candidate-btn';
+    btn.textContent = '✨ Generate and fill candidates';
+    btn.style.marginTop = '25px';
+    btn.style.marginLeft = '0px';
+    btn.onclick = generateCandidates;
+
+    const clearBtn = document.createElement('button');
+    clearBtn.id = 'cute-clear-candidate-btn';
+    clearBtn.textContent = '🫧 Clear all candidates';
+    clearBtn.style.marginTop = '12px';
+    clearBtn.style.marginLeft = '0px';
+    clearBtn.onclick = clearAllCandidates;
+
+    const autoCandidateCheckbox = [...document.querySelectorAll('label')]
+        .find(el => el.textContent.includes('Auto Candidate Mode'));
+
+    if (autoCandidateCheckbox?.parentElement) {
+        autoCandidateCheckbox.parentElement.append(btn, clearBtn);
+    } else {
+        const board = document.querySelector('[role="gridcell"]')?.parentElement;
+        (board || document.body).append(btn, clearBtn);
+    }
+}
+
+
 async function main() {
     const boardFound = await findSudokuBoard();
 
@@ -132,7 +200,7 @@ async function main() {
         return;
     }
 
-    generateCandidates();
+    injectAutoButtons();
 }
 
 
