@@ -1,35 +1,65 @@
 
+:root { /* default theme */
+    --csp-candidate: #ef4089;
+    --csp-selected: rgba(255, 175, 208, 0.97);
+    --csp-highlighted: rgb(247, 215, 220);
+    --csp-number: #530e2d;
+    --csp-confirmed: #d25c93;
+    --csp-button: #fbacce;
+    --csp-button-hover: #ea7ba8;
+}
+
+html[data-cute-sudoku-theme="green"] {
+    --csp-candidate: #39965d;
+    --csp-selected: rgba(167, 221, 179, 0.97);
+    --csp-highlighted: rgb(215, 240, 219);
+    --csp-number: rgb(35, 65, 45);
+    --csp-confirmed: rgb(92, 151, 107);
+    --csp-button: #9bcdaa;
+    --csp-button-hover: #6eaf83;
+}
+
+html[data-cute-sudoku-theme="blue"] {
+    --csp-candidate: #4388d5;
+    --csp-selected: rgba(160, 193, 236, 0.97);
+    --csp-highlighted: rgb(215, 230, 250);
+    --csp-number: rgb(35, 48, 75);
+    --csp-confirmed: rgb(91, 128, 184);
+    --csp-button: #a6c7f0;
+    --csp-button-hover: #78a9e5;
+}
+
 svg.su-candidate-button path.su-number,
 .su-candidate-button:hover path.su-number,
 .su-candidate-button:focus path.su-number,
 [class*="candidate"] path {
-fill: #ef4089 !important;
+fill: var(--csp-candidate) !important;
 }
 
 [aria-selected="true"],
 .su-cell[aria-selected="true"],
 .su-cell.highlightedSameNumber {
-    background-color: rgba(255, 175, 208, 0.97) !important;
+    background-color: var(--csp-selected) !important;
 }
 
 .su-cell.highlighted:not([aria-selected="true"]) {
-    background-color: rgb(247, 215, 220) !important;
+    background-color: var(--csp-highlighted) !important;
 }
 
 svg.su-keyboard__svg path.su-number,
 svg.su-cell__value path.su-number {
-    fill: rgb(53, 26, 97) !important;
+    fill: var(--csp-number) !important;
 }
 
 .su-cell.confirmed svg.su-cell__value.su-stretch path.su-number {
-    fill: rgb(132, 98, 187) !important;
+    fill: var(--csp-confirmed) !important;
 }
 
 #cute-candidate-btn,
 #cute-clear-candidate-btn {
     margin-top: 8px;
     padding: 8px 16px;
-    background-color: #fbacce;
+    background-color: var(--csp-button);
     color: white;
     border: none;
     border-radius: 6px;
@@ -43,5 +73,5 @@ svg.su-cell__value path.su-number {
 
 #cute-candidate-btn:hover,
 #cute-clear-candidate-btn:hover {
-    background-color: #ea7ba8;
+    background-color: var(--csp-button-hover);
 }

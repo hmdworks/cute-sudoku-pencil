@@ -4,6 +4,14 @@
     "name": "Cute Sudoku Pencil",
     "version": "1.0",
     "description": "Your little Sudoku helper ♡",
+
+    "permissions": ["storage"],
+
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "Cute Sudoku Pencil"
+    },
+
     "content_scripts": [
         {
             "matches": ["https://www.nytimes.com/puzzles/sudoku*"],
