@@ -67,33 +67,52 @@ async function readGrid() {
 }
 
 
-function simulateClick(element) {
-    element.dispatchEvent(new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window
-    }));
-}
+function sendCandidateUpdates(updates) {
+    return new Promise((resolve, reject) => {
+        const requestId = crypto.randomUUID();
 
+        const timeout = setTimeout(() => {
+            window.removeEventListener("message", handleResponse);
+            reject(new Error("Timed out waiting for NYT Redux."));
+        }, 10000);
 
-function getCandidatesForCell(cell) {
-    const rect = cell.getBoundingClientRect();
+        function handleResponse(event) {
+            if (event.source !== window || event.origin !== location.origin) {
+                return;
+            }
 
-    return [...document.querySelectorAll('.su-candidate')]
-        .filter(candidate => {
-            const candidateRect = candidate.getBoundingClientRect();
+            const message = event.data;
 
-            const x = candidateRect.left + candidateRect.width / 2;
-            const y = candidateRect.top + candidateRect.height / 2;
+            if (
+                !message ||
+                message.channel !== "cute-sudoku-pencil" ||
+                message.direction !== "response" ||
+                message.requestId !== requestId
+            ) {
+                return;
+            }
 
-            return (
-                x >= rect.left &&
-                x <= rect.right &&
-                y >= rect.top &&
-                y <= rect.bottom
-            );
-        })
-        .map(candidate => Number(candidate.dataset.candidate));
+            clearTimeout(timeout);
+            window.removeEventListener("message", handleResponse);
+
+            if (!message.success) {
+                reject(new Error(message.error || "Candidate update failed."));
+                return;
+            }
+
+            resolve(message.result);
+        }
+
+        window.addEventListener("message", handleResponse);
+
+        window.postMessage({
+            channel: "cute-sudoku-pencil",
+            direction: "request",
+            type: "updateCandidates",
+            requestId,
+            payload: { updates }
+        }, location.origin);
+    });
 }
 
 
@@ -101,57 +120,33 @@ async function updateCandidates(mode) {
     const grid = await readGrid();
     if (!grid) return;
 
-    const originalSelection = document.querySelector('.su-cell.selected');
+    const updates = [];
 
-    const cells = [...document.querySelectorAll('[role="gridcell"]')];
+    for (let cellId = 0; cellId < 81; cellId++) {
+        const row = Math.floor(cellId / 9);
+        const col = cellId % 9;
 
-    cells.sort((a, b) =>
-        Number(a.dataset.cell) - Number(b.dataset.cell)
-    );
+        if (!isEmpty(grid, row, col)) continue;
 
-    for (let r = 0; r < 9; r++) {
-        for (let c = 0; c < 9; c++) {
+        const validCandidates = getCandidates(grid, row, col);
 
-            if (!isEmpty(grid, r, c)) continue;
+        const candidates = [];
 
-            const cell = cells[r * 9 + c];
-            if (!cell) continue;
-
-            const validCandidates = getCandidates(grid, r, c);
-
-            cell.click();
-
-            const container = document.querySelector(
-                '.su-candidates.selected'
-            );
-
-            if (!container) continue;
-
-            const existingCandidates = getCandidatesForCell(cell);
-
-            for (let num = 1; num <= 9; num++) {
-                const isSelected = existingCandidates.includes(num);
-
-                const shouldBeSelected = mode === 'generate'
-                    ? validCandidates.includes(num)
-                    : false;
-
-                if (isSelected === shouldBeSelected) continue;
-
-                const button = container.querySelector(
-                    `.su-candidate-button[data-candidate="${num}"]`
-                );
-
-                if (button) {
-                    simulateClick(button);
-                }
-            }
+        for (let digit = 1; digit <= 9; digit++) {
+            candidates.push({
+                digit,
+                selected: mode === "generate"
+                    && validCandidates.includes(digit)
+            });
         }
+
+        updates.push({
+            cellId,
+            candidates
+        });
     }
 
-    if (originalSelection) {
-        originalSelection.click();
-    }
+    await sendCandidateUpdates(updates);
 }
 
 async function generateCandidates() {
