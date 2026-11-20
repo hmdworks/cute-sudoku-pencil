@@ -29,6 +29,35 @@ chrome.storage.onChanged.addListener((changes, area) => {
 });
 
 
+async function saveCompletedPuzzle(record) {
+    const result = await chrome.storage.local.get({
+        completedPuzzles: []
+    });
+
+    const puzzles = result.completedPuzzles;
+
+    puzzles.push(record);
+
+    await chrome.storage.local.set({
+        completedPuzzles: puzzles
+    });
+}
+
+
+window.addEventListener("message", event => {
+    if (
+        event.source !== window ||
+        event.origin !== location.origin ||
+        event.data?.source !== "cute-sudoku-pencil" ||
+        event.data?.type !== "saveCompletedPuzzle"
+    ) {
+        return;
+    }
+
+    saveCompletedPuzzle(event.data.record);
+});
+
+
 function findSudokuBoard() {
     return new Promise((resolve) => {
         const checkBoard = () => {

@@ -1,4 +1,64 @@
 
+//// FIND BOARD ////
+function findSudokuBoard() {
+    return new Promise((resolve) => {
+        const checkBoard = () => {
+            const cells = document.querySelectorAll(
+                '[role="gridcell"]'
+            );
+
+            if (cells.length === 81) {
+                observer.disconnect();
+                resolve(true);
+            }
+        };
+
+        const observer = new MutationObserver(checkBoard);
+
+        observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+        });
+
+        checkBoard();
+    });
+}
+
+
+//// NYT STORE ////
+let nytStore = null;
+
+async function getNYTStore() {
+    if (nytStore) return nytStore;
+
+    await findSudokuBoard();
+
+    const cells = document.querySelectorAll('[role="gridcell"]');
+
+    for (const element of cells) {
+        const fiberKey = Object.keys(element).find(
+            key => key.startsWith("__reactFiber$")
+        );
+
+        if (!fiberKey) continue;
+
+        let fiber = element[fiberKey];
+
+        for (let i = 0; fiber && i < 60; i++, fiber = fiber.return) {
+            const store = fiber.memoizedProps?.value?.store;
+
+            if (store?.getState && store?.dispatch) {
+                nytStore = store;
+                return nytStore;
+            }
+        }
+    }
+
+    throw new Error("Could not find the NYT Redux store.");
+}
+
+
+//// CELEBRATION SOUND ////
 (() => {
     const originalPlay = HTMLMediaElement.prototype.play;
 
@@ -37,6 +97,50 @@
 })();
 
 
+//// COMPLETION DETECTOR ////
+(async () => {
+    const store = await getNYTStore();
+
+    let previousPuzzleState = store.getState();
+
+    store.subscribe(() => {
+        const state = store.getState();
+
+        for (const difficulty of ["easy", "medium", "hard"]) {
+            const previous = previousPuzzleState.game.byKey[difficulty];
+            const current = state.game.byKey[difficulty];
+
+            if (!previous?.solved && current?.solved) {
+                setTimeout(() => {
+                    const finalState = store.getState();
+
+                    const finalPuzzle = finalState.game.byKey[difficulty];
+
+                    const puzzleInfo = finalState.puzzles[difficulty];
+
+                    const record = {
+                        puzzleId: puzzleInfo.puzzle_id,
+                        date: finalPuzzle.id,
+                        difficulty,
+                        elapsedTime: finalState.game.timers[difficulty].elapsedTime,
+                        completedAt: new Date().toISOString()
+                    };
+
+                    window.postMessage({
+                        source: "cute-sudoku-pencil",
+                        type: "saveCompletedPuzzle",
+                        record
+                    }, location.origin);
+
+                }, 200);
+            };
+        }
+        previousPuzzleState = state;
+    });
+})();
+
+
+//// UPDATE CANDIDATES ////
 (() => {
     const CHANNEL = "cute-sudoku-pencil";
  
@@ -77,34 +181,8 @@
         return cachedWebpackRequire;
     }
 
-
-    function getNYTStore() {
-        const cells = document.querySelectorAll('[role="gridcell"]');
-
-        for (const element of cells) {
-            const fiberKey = Object.keys(element).find(
-                key => key.startsWith("__reactFiber$")
-            );
-
-            if (!fiberKey) continue;
-
-            let fiber = element[fiberKey];
-
-            for (let i = 0; fiber && i < 60; i++, fiber = fiber.return) {
-                const store = fiber.memoizedProps?.value?.store;
-
-                if (store?.getState && store?.dispatch) {
-                    return store;
-                }
-            }
-        }
-
-        throw new Error("Could not find the NYT Redux store.");
-    }
-
-
-    function updateCandidates(updates) {
-        const store = getNYTStore();
+    async function updateCandidates(updates) {
+        const store = await getNYTStore();
         const webpackRequire = getWebpackRequire();
 
         const slice = webpackRequire(4755).ZP;
@@ -203,7 +281,7 @@
         };
     }
 
-    window.addEventListener("message", event => {
+    window.addEventListener("message", async event => {
         if (event.source !== window || event.origin !== location.origin) {
             return;
         }
@@ -220,7 +298,7 @@
         }
 
         try {
-            const result = updateCandidates(message.payload.updates);
+            const result = await updateCandidates(message.payload.updates);
 
             window.postMessage({
                 channel: CHANNEL,
