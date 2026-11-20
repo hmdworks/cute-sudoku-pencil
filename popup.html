@@ -7,26 +7,74 @@
 </head>
 <body>
     <h2>Cute Sudoku Pencil ♡</h2>
-    <p>Choose your theme!</p>
 
-    <div class="themes">
-        <button data-theme="pink">
-            <span class="swatch pink"></span>
-            Pink
-            <span class="check">✓</span>
-        </button>
+    <div class="settings-layout">
 
-        <button data-theme="green">
-            <span class="swatch green"></span>
-            Green
-            <span class="check">✓</span>
-        </button>
+        <div class="themes-section">
+            <p>Choose your theme!</p>
 
-        <button data-theme="blue">
-            <span class="swatch blue"></span>
-            Blue
-            <span class="check">✓</span>
-        </button>
+            <div class="themes">
+                <button data-theme="pink">
+                    <span class="swatch pink"></span>
+                    Pink
+                    <span class="check">✓</span>
+                </button>
+
+                <button data-theme="green">
+                    <span class="swatch green"></span>
+                    Green
+                    <span class="check">✓</span>
+                </button>
+
+                <button data-theme="blue">
+                    <span class="swatch blue"></span>
+                    Blue
+                    <span class="check">✓</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-section">
+
+            <div id="stats-content" class="stats-content">
+
+                <div class="stat-card">
+                    <span class="stat-label">Puzzles completed</span>
+                    <span id="total-completed" class="stat-value">0</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Current streak</span>
+                    <span id="current-streak" class="stat-value">0 days</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Longest streak</span>
+                    <span id="longest-streak" class="stat-value">0 days</span>
+                </div>
+
+                <div class="difficulty-stats">
+                    <h3>Average time by difficulty</h3>
+
+                    <div class="difficulty-row">
+                        <span>Easy</span>
+                        <span id="average-easy">--:--</span>
+                    </div>
+
+                    <div class="difficulty-row">
+                        <span>Medium</span>
+                        <span id="average-medium">--:--</span>
+                    </div>
+
+                    <div class="difficulty-row">
+                        <span>Hard</span>
+                        <span id="average-hard">--:--</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
     </div>
 
     <script src="popup.js"></script>

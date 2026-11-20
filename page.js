@@ -101,6 +101,25 @@ async function getNYTStore() {
 (async () => {
     const store = await getNYTStore();
 
+    const revealedPuzzles = new Set();
+
+    const originalDispatch = store.dispatch;
+
+    store.dispatch = function (action) {
+        if (action.type === "game/revealPuzzle") {
+            const state = store.getState();
+            const difficulty = state.game.activeKey;
+            const puzzleInfo = state.game.byKey[difficulty];
+
+            if (puzzleInfo) {
+                const puzzleId = puzzleInfo.puzzle_id;
+                revealedPuzzles.add(puzzleId);
+            }
+        }
+
+        return originalDispatch.call(this, action);
+    };
+
     let previousPuzzleState = store.getState();
 
     store.subscribe(() => {
@@ -118,12 +137,17 @@ async function getNYTStore() {
 
                     const puzzleInfo = finalState.puzzles[difficulty];
 
+                    const puzzleId = puzzleInfo.puzzle_id;
+
+                    const revealed = revealedPuzzles.has(puzzleId);
+
                     const record = {
-                        puzzleId: puzzleInfo.puzzle_id,
+                        puzzleId: puzzleId,
                         date: finalPuzzle.id,
                         difficulty,
                         elapsedTime: finalState.game.timers[difficulty].elapsedTime,
-                        completedAt: new Date().toISOString()
+                        completedAt: new Date().toISOString(),
+                        revealed: revealed,
                     };
 
                     window.postMessage({
