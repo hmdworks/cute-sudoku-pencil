@@ -1,4 +1,13 @@
 
+const celebrationSoundUrl = chrome.runtime.getURL("sounds/yay.mp3");
+
+window.postMessage({
+    source: "cute-sudoku-pencil",
+    type: "setCelebrationSound",
+    url: celebrationSoundUrl
+}, "*");
+
+
 function applyTheme(theme) {
     const allowedThemes = ["pink", "green", "blue"];
 

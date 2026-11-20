@@ -1,5 +1,43 @@
 
 (() => {
+    const originalPlay = HTMLMediaElement.prototype.play;
+
+    let celebrationSound = null;
+
+    window.addEventListener("message", (event) => {
+        if (
+            event.source !== window ||
+            event.data?.source !== "cute-sudoku-pencil" ||
+            event.data?.type !== "setCelebrationSound"
+        ) {
+            return;
+        }
+
+        celebrationSound = new Audio(event.data.url);
+    });
+
+    HTMLMediaElement.prototype.play = function () {
+        if ((this.currentSrc || this.src).includes("San_Jose_Strut.mp3")) {
+
+            if (!celebrationSound) {
+                console.warn("Celebration sound hasn't loaded yet.");
+                return Promise.resolve();
+            }
+
+            setTimeout(() => {
+                celebrationSound.currentTime = 0;
+                celebrationSound.play();
+            }, 700);
+
+            return Promise.resolve();
+        }
+
+        return originalPlay.apply(this, arguments);
+    };
+})();
+
+
+(() => {
     const CHANNEL = "cute-sudoku-pencil";
  
     let cachedWebpackRequire = null;

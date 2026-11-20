@@ -26,6 +26,13 @@
             "run_at": "document_idle",
             "world": "ISOLATED"
         }
+    ],
+
+        "web_accessible_resources": [
+        {
+            "resources": ["sounds/yay.mp3"],
+            "matches": ["https://www.nytimes.com/*"]
+        }
     ]
 }
 
