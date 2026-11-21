@@ -104,3 +104,8 @@ svg.su-cell__value path.su-number {
 .pz-content {
     background: var(--csp-bg) !important;
 }
+
+.index-module_adInterstitial__s7MRP,
+.index-module_adInterstitialSkipButton__ibEpm {
+    background-color: var(--csp-load-bg) !important;
+}
