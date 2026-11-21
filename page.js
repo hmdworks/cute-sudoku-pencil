@@ -105,6 +105,14 @@ async function getNYTStore() {
 
     const originalDispatch = store.dispatch;
 
+    function sendPuzzleStatus(solved) {
+        window.postMessage({
+            source: "cute-sudoku-pencil",
+            type: "puzzleStatus",
+            solved,
+        }, location.origin);
+    }
+
     store.dispatch = function (action) {
         if (action.type === "game/revealPuzzle") {
             const state = store.getState();
@@ -117,49 +125,64 @@ async function getNYTStore() {
             }
         }
 
+        // if (action.type === "game/resetPuzzle") {
+        //     sendPuzzleStatus(false);
+        // }
+
         return originalDispatch.call(this, action);
     };
 
-    let previousPuzzleState = store.getState();
+    const initialState = store.getState();
+    const difficulty = initialState.game.activeKey;
+
+    let previousSolved = Boolean(
+        initialState.game.byKey[difficulty]?.solved
+    );
+
+    sendPuzzleStatus(previousSolved);
 
     store.subscribe(() => {
         const state = store.getState();
+        const current = state.game.byKey[difficulty];
+        const isSolved = Boolean(current?.solved);
 
-        for (const difficulty of ["easy", "medium", "hard"]) {
-            const previous = previousPuzzleState.game.byKey[difficulty];
-            const current = state.game.byKey[difficulty];
-
-            if (!previous?.solved && current?.solved) {
-                setTimeout(() => {
-                    const finalState = store.getState();
-
-                    const finalPuzzle = finalState.game.byKey[difficulty];
-
-                    const puzzleInfo = finalState.puzzles[difficulty];
-
-                    const puzzleId = puzzleInfo.puzzle_id;
-
-                    const revealed = revealedPuzzles.has(puzzleId);
-
-                    const record = {
-                        date: finalPuzzle.id,
-                        difficulty,
-                        elapsedTime: finalState.game.timers[difficulty].elapsedTime,
-                        completedAt: new Date().toISOString(),
-                        revealed: revealed,
-                    };
-
-                    window.postMessage({
-                        source: "cute-sudoku-pencil",
-                        type: "saveCompletedPuzzle",
-                        record,
-                        puzzleId,
-                    }, location.origin);
-
-                }, 200);
-            };
+        if (isSolved !== previousSolved) {
+            sendPuzzleStatus(isSolved);
         }
-        previousPuzzleState = state;
+
+        if (!previousSolved && isSolved) {
+            setTimeout(() => {
+                const finalState = store.getState();
+
+                const finalPuzzle = finalState.game.byKey[difficulty];
+
+                const puzzleInfo = finalState.puzzles[difficulty];
+
+                const puzzleId = puzzleInfo.puzzle_id;
+
+                const revealed = revealedPuzzles.has(puzzleId);
+
+                const record = {
+                    date: finalPuzzle.id,
+                    difficulty,
+                    elapsedTime: finalState.game.timers[difficulty].elapsedTime,
+                    completedAt: new Date().toISOString(),
+                    revealed: revealed,
+                };
+
+                window.postMessage({
+                    source: "cute-sudoku-pencil",
+                    type: "saveCompletedPuzzle",
+                    record,
+                    puzzleId,
+                }, location.origin);
+
+            }, 200);
+
+            sendPuzzleStatus(true);
+        };
+        
+        previousSolved = isSolved;
     });
 })();
 

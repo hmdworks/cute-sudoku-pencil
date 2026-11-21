@@ -1,4 +1,21 @@
 
+let currentPuzzleSolved = null;
+let boardReady = false;
+
+
+window.addEventListener("message", event => {
+    if (
+        event.source !== window ||
+        event.origin !== location.origin ||
+        event.data?.source !== "cute-sudoku-pencil" ||
+        event.data?.type !== "puzzleStatus"
+    ) return;
+
+    currentPuzzleSolved = event.data.solved;
+    updateCandidateButtons();
+});
+
+
 const celebrationSoundUrl = chrome.runtime.getURL("sounds/yay.mp3");
 
 window.postMessage({
@@ -224,6 +241,29 @@ function injectAutoButtons() {
         const board = document.querySelector('[role="gridcell"]')?.parentElement;
         (board || document.body).append(btn, clearBtn);
     }
+
+    if (currentPuzzleSolved) {
+        btn.classList.add('csp-hidden');
+        clearBtn.classList.add('csp-hidden');
+    }
+}
+
+
+function updateCandidateButtons() {
+    if (!boardReady || currentPuzzleSolved === null) return;
+
+    const btn = document.getElementById('cute-candidate-btn');
+    const clearBtn = document.getElementById('cute-clear-candidate-btn');
+
+    if (!btn || !clearBtn) {
+        if (!currentPuzzleSolved) {
+            injectAutoButtons();
+        }
+        return;
+    }
+
+    btn.classList.toggle('csp-hidden', currentPuzzleSolved);
+    clearBtn.classList.toggle('csp-hidden', currentPuzzleSolved);
 }
 
 
@@ -235,7 +275,8 @@ async function main() {
         return;
     }
 
-    injectAutoButtons();
+    boardReady = true;
+    updateCandidateButtons();
 }
 
 

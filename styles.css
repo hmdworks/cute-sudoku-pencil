@@ -79,11 +79,21 @@ svg.su-cell__value path.su-number {
     font-family: inherit;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     display: block;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 100ms ease, visibility 100ms ease;
 }
 
 #cute-candidate-btn:hover,
 #cute-clear-candidate-btn:hover {
     background-color: var(--csp-button-hover);
+}
+
+#cute-candidate-btn.csp-hidden,
+#cute-clear-candidate-btn.csp-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 ._moment_mlx7l_10[style*="rgb(251, 155, 0)"] {
