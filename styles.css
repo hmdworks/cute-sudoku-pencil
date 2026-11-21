@@ -7,6 +7,8 @@
     --csp-confirmed: #d25c93;
     --csp-button: #fbacce;
     --csp-button-hover: #ea7ba8;
+    --csp-load-bg: rgba(255, 175, 208, 0.97);
+    --csp-bg: #fbf5f7;
 }
 
 html[data-cute-sudoku-theme="green"] {
@@ -17,6 +19,8 @@ html[data-cute-sudoku-theme="green"] {
     --csp-confirmed: rgb(92, 151, 107);
     --csp-button: #9bcdaa;
     --csp-button-hover: #6eaf83;
+    --csp-load-bg: rgba(167, 221, 179, 0.97);
+    --csp-bg: #f1f7f3;
 }
 
 html[data-cute-sudoku-theme="blue"] {
@@ -27,6 +31,8 @@ html[data-cute-sudoku-theme="blue"] {
     --csp-confirmed: rgb(91, 128, 184);
     --csp-button: #a6c7f0;
     --csp-button-hover: #78a9e5;
+    --csp-load-bg: rgba(160, 193, 236, 0.97);
+    --csp-bg: #f5f8fc;
 }
 
 svg.su-candidate-button path.su-number,
@@ -46,9 +52,13 @@ fill: var(--csp-candidate) !important;
     background-color: var(--csp-highlighted) !important;
 }
 
-svg.su-keyboard__svg path.su-number,
+svg.su-keyboard__svg:not(.completed) path.su-number,
 svg.su-cell__value path.su-number {
     fill: var(--csp-number) !important;
+}
+
+.su-keyboard__mode[aria-checked="true"] {
+    background-color: var(--csp-number) !important;
 }
 
 .su-cell.confirmed svg.su-cell__value.su-stretch path.su-number {
@@ -74,4 +84,13 @@ svg.su-cell__value path.su-number {
 #cute-candidate-btn:hover,
 #cute-clear-candidate-btn:hover {
     background-color: var(--csp-button-hover);
+}
+
+._moment_mlx7l_10[style*="rgb(251, 155, 0)"] {
+    background: var(--csp-load-bg) !important;
+}
+
+._moment_mlx7l_10:not([style*="rgb(251, 155, 0)"]),
+.pz-content {
+    background: var(--csp-bg) !important;
 }

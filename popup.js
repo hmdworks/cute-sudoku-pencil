@@ -9,6 +9,8 @@ function updateSelectedButton(theme) {
             button.dataset.theme === theme
         );
     });
+
+    document.documentElement.dataset.theme = theme;
 }
 
 chrome.storage.local.get({ theme: "pink" }, result => {

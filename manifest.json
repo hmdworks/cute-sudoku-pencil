@@ -15,6 +15,13 @@
     "content_scripts": [
         {
             "matches": ["https://www.nytimes.com/puzzles/sudoku*"],
+            "js": ["theme.js"],
+            "css": ["styles.css"],
+            "run_at": "document_start",
+            "world": "ISOLATED"
+        },
+        {
+            "matches": ["https://www.nytimes.com/puzzles/sudoku*"],
             "js": ["page.js"],
             "run_at": "document_idle",
             "world": "MAIN"
@@ -22,17 +29,16 @@
         {
             "matches": ["https://www.nytimes.com/puzzles/sudoku*"],
             "js": ["candidates.js", "content.js"],
-            "css": ["styles.css"],
             "run_at": "document_idle",
             "world": "ISOLATED"
         }
     ],
 
-        "web_accessible_resources": [
-        {
-            "resources": ["sounds/yay.mp3"],
-            "matches": ["https://www.nytimes.com/*"]
-        }
+    "web_accessible_resources": [
+    {
+        "resources": ["sounds/yay.mp3"],
+        "matches": ["https://www.nytimes.com/*"]
+    }
     ]
 }
 

@@ -1,11 +1,46 @@
 
+:root {
+    --popup-bg: #fbf5f7;
+    --theme-btn-bg: #f6cad7;
+    --theme-btn-selected-bg: #fff0f5;
+    --theme-btn-border: #df91ad;
+    --border-color: #f0dce4;
+    --text-color: #59434d;
+    --muted-color: #947985;
+    --accent-color: #c66d96;
+}
+
+:root[data-theme="green"] {
+    --popup-bg: #f3faf5;
+    --theme-btn-bg: #befdd0;
+    --theme-btn-selected-bg: #e9f8ed;
+    --theme-btn-border: #83bd91;
+    --border-color: #d8eadc;
+    --text-color: #405a46;
+    --muted-color: #829888;
+    --accent-color: #39965d;
+}
+
+:root[data-theme="blue"] {
+    --popup-bg: #f3f7fd;
+    --theme-btn-bg: #c7ddfd;
+    --theme-btn-selected-bg: #edf4fd;
+    --theme-btn-border: #83aee8;
+    --border-color: #dce7f5;
+    --text-color: #40516b;
+    --muted-color: #8292aa;
+    --accent-color: #4388d5;
+}
+
 body {
     width: 400px;
     padding: 18px;
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #fff7fa;
-    color: #59434d;
+    background: var(--popup-bg);
+    color: var(--text-color);
+    border: 2px solid var(--border-color);
+    border-radius: 2px;
 }
 
 h2 {
@@ -15,7 +50,7 @@ h2 {
 
 p {
     font-size: 13px;
-    color: #947985;
+    color: var(--muted-color);
     margin-bottom: 14px;
 }
 
@@ -31,17 +66,17 @@ p {
     align-items: center;
     gap: 10px;
     padding: 10px;
-    border: 1px solid #f0d5df;
+    border: 1px solid var(--border-color);
     border-radius: 9px;
     background: white;
-    color: #59434d;
+    color: var(--text-color);
     cursor: pointer;
     text-align: left;
 }
 
 .themes button[aria-pressed="true"] {
-    border: 2px solid #df91ad;
-    background: #fff0f5;
+    border: 2px solid var(--theme-btn-border);
+    background: var(--theme-btn-selected-bg);
 }
 
 .check {
@@ -98,32 +133,32 @@ p {
     align-items: center;
     padding: 9px 10px;
     background: white;
-    border: 1px solid #f0dce4;
+    border: 1px solid var(--border-color);
     border-radius: 9px;
 }
 
 .stat-label {
     font-size: 12px;
-    color: #947985;
+    color: var(--muted-color);
 }
 
 .stat-value {
     font-size: 13px;
     font-weight: bold;
-    color: #c66d96;
+    color: var(--accent-color);
 }
 
 .difficulty-stats {
     padding: 10px;
     background: white;
-    border: 1px solid #f0dce4;
+    border: 1px solid var(--border-color);
     border-radius: 9px;
 }
 
 .difficulty-stats h3 {
     font-size: 12px;
     margin: 0 0 10px;
-    color: #947985;
+    color: var(--muted-color);
 }
 
 .difficulty-row {
@@ -131,5 +166,5 @@ p {
     justify-content: space-between;
     font-size: 12px;
     padding: 5px 0;
-    color: #59434d;
+    color: var(--text-color);
 }
