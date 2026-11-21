@@ -8,14 +8,16 @@ window.postMessage({
 }, "*");
 
 
-async function saveCompletedPuzzle(record) {
+async function saveCompletedPuzzle(record, puzzleId) {
     const result = await chrome.storage.local.get({
-        completedPuzzles: []
+        completedPuzzles: {}
     });
 
     const puzzles = result.completedPuzzles;
 
-    puzzles.push(record);
+    if (!puzzles[puzzleId]) {
+        puzzles[puzzleId] = record;
+    }
 
     await chrome.storage.local.set({
         completedPuzzles: puzzles
@@ -33,7 +35,7 @@ window.addEventListener("message", event => {
         return;
     }
 
-    saveCompletedPuzzle(event.data.record);
+    saveCompletedPuzzle(event.data.record, event.data.puzzleId);
 });
 
 

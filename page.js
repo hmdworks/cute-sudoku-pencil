@@ -109,7 +109,7 @@ async function getNYTStore() {
         if (action.type === "game/revealPuzzle") {
             const state = store.getState();
             const difficulty = state.game.activeKey;
-            const puzzleInfo = state.game.byKey[difficulty];
+            const puzzleInfo = state.puzzles[difficulty];
 
             if (puzzleInfo) {
                 const puzzleId = puzzleInfo.puzzle_id;
@@ -142,7 +142,6 @@ async function getNYTStore() {
                     const revealed = revealedPuzzles.has(puzzleId);
 
                     const record = {
-                        puzzleId: puzzleId,
                         date: finalPuzzle.id,
                         difficulty,
                         elapsedTime: finalState.game.timers[difficulty].elapsedTime,
@@ -153,7 +152,8 @@ async function getNYTStore() {
                     window.postMessage({
                         source: "cute-sudoku-pencil",
                         type: "saveCompletedPuzzle",
-                        record
+                        record,
+                        puzzleId,
                     }, location.origin);
 
                 }, 200);
