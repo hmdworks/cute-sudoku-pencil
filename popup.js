@@ -35,7 +35,7 @@ const statsContent = document.getElementById("stats-content");
 
 (async () => {
     const result = await chrome.storage.local.get({
-        completedPuzzles: []
+        completedPuzzles: {}
     });
 
     const stats = calculateStats(result.completedPuzzles);
@@ -45,7 +45,7 @@ const statsContent = document.getElementById("stats-content");
 
 
 function calculateStats(puzzles) {
-    const validPuzzles = puzzles.filter(puzzle => !puzzle.revealed);
+    const validPuzzles = Object.values(puzzles).filter(puzzle => !puzzle.revealed);
 
     const totalCompleted = validPuzzles.length;
 
