@@ -125,10 +125,6 @@ async function getNYTStore() {
             }
         }
 
-        // if (action.type === "game/resetPuzzle") {
-        //     sendPuzzleStatus(false);
-        // }
-
         return originalDispatch.call(this, action);
     };
 

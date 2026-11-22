@@ -2,33 +2,33 @@
 {
     "manifest_version": 3,
     "name": "Cute Sudoku Pencil",
-    "version": "1.0",
+    "version": "1.0.0",
     "description": "Your little Sudoku helper ♡",
 
     "permissions": ["storage"],
 
     "action": {
-        "default_popup": "popup.html",
+        "default_popup": "popup/popup.html",
         "default_title": "Cute Sudoku Pencil"
     },
 
     "content_scripts": [
         {
             "matches": ["https://www.nytimes.com/puzzles/sudoku*"],
-            "js": ["theme.js"],
-            "css": ["styles.css"],
+            "js": ["scripts/theme.js"],
+            "css": ["styles/styles.css"],
             "run_at": "document_start",
             "world": "ISOLATED"
         },
         {
             "matches": ["https://www.nytimes.com/puzzles/sudoku*"],
-            "js": ["page.js"],
+            "js": ["scripts/page.js"],
             "run_at": "document_idle",
             "world": "MAIN"
         },
         {
             "matches": ["https://www.nytimes.com/puzzles/sudoku*"],
-            "js": ["candidates.js", "content.js"],
+            "js": ["scripts/candidates.js", "scripts/content.js"],
             "run_at": "document_idle",
             "world": "ISOLATED"
         }
