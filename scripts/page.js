@@ -117,7 +117,7 @@ async function getNYTStore() {
         if (action.type === "game/revealPuzzle") {
             const state = store.getState();
             const difficulty = state.game.activeKey;
-            const puzzleInfo = state.puzzles[difficulty];
+            const puzzleInfo = state.puzzles.byKey[difficulty];
 
             if (puzzleInfo) {
                 const puzzleId = puzzleInfo.puzzle_id;
@@ -152,7 +152,7 @@ async function getNYTStore() {
 
                 const finalPuzzle = finalState.game.byKey[difficulty];
 
-                const puzzleInfo = finalState.puzzles[difficulty];
+                const puzzleInfo = finalState.puzzles.byKey[difficulty];
 
                 const puzzleId = puzzleInfo.puzzle_id;
 
